@@ -1,0 +1,25 @@
+# """ This is our public-facing API for interacting with our PRISMA CRUD API """
+
+# """ GraphQL does not have imports, but Prisma can import things via an import statement as a comment """
+# """ This actually only imports it when it is needed, so it isn't actually importing the entire file """
+
+# import * from './generated/prisma.graphql'
+
+type User {
+	id: ID!
+	name: String!
+}
+
+type Mutation {
+	createItem(
+		title: String
+		description: String
+		price: Int
+		image: String
+		largeImage: String
+	): Item!
+}
+
+type Query {
+	items: [Item]!
+}

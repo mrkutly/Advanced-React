@@ -1,0 +1,28 @@
+# """This is the schema for our remote DB. Prisma takes this and creates a full CRUD API (like an ORM)"""
+
+# """ When adding a new model, create it here first, run prisma-deploy (npm run deploy) """
+
+# """ Prisma deploying will pull down a new generated/prisma.graphql """
+# """ file with all the generated Queries and Mutations for the new model """
+
+# """ Then you update your schema.graphql (public-facing API for your db) by adding what you want from the new model """
+
+# """  Then write your Mutations and Queries for the model in Mutation.js and 'Query.js """
+
+type User {
+	id: ID! @unique
+	name: String!
+	email: String!
+}
+
+type Item {
+	id: ID! @unique
+	title: String!
+	description: String!
+	image: String!
+	largeImage: String!
+	price: Int!
+	createdAt: DateTime!
+	updatedAt: DateTime!
+	# user: User!
+}
