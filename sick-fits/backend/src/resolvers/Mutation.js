@@ -6,6 +6,22 @@ const Mutations = {
 		const item = await ctx.db.mutation.createItem({ data: { ...args } }, info);
 		return item;
 	},
+
+	updateItem(parent, args, ctx, info) {
+		// first, take a copy of the updates
+		const updates = { ...args };
+		// remove id from updates (you don't want to update the id)
+		delete updates.id;
+		// now run the mutation (this is defined in the prisma.graphqlfile on line 433)
+		return ctx.db.mutation.updateItem(
+			{
+				data: updates,
+				where: { id: args.id },
+				// passing info as the second arg tells it what to return (the item)
+			},
+			info
+		);
+	},
 };
 
 module.exports = Mutations;
