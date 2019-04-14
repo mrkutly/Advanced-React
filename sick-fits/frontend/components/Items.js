@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
 import styled from "styled-components";
-import Item from "../components/Item";
+import Item from "./Item";
+import Pagination from "./Pagination";
+import { perPage } from "../config";
 
 const Center = styled.div`
 	text-align: center;
@@ -17,8 +19,8 @@ const ItemsList = styled.div`
 `;
 
 const ALL_ITEMS_QUERY = gql`
-	query ALL_ITEMS_QUERY {
-		items {
+	query ALL_ITEMS_QUERY($skip: Int = 0, $first: Int = ${perPage}) {
+		items(first: $first, skip: $skip, orderBy: createdAt_DESC ) {
 			id
 			title
 			price
@@ -33,7 +35,16 @@ export default class Items extends Component {
 	render() {
 		return (
 			<Center>
-				<Query query={ALL_ITEMS_QUERY}>
+				<Pagination page={this.props.page} />
+				<Query
+					query={ALL_ITEMS_QUERY}
+					variables={{
+						// skip 0 items for page 1, 4 items for page 2, etc.
+						skip: perPage * (this.props.page - 1),
+						// then show the first 4 items
+						first: perPage,
+					}}
+				>
 					{({ data, error, loading }) => {
 						console.log(data);
 						if (loading) return <p>Loading...</p>;
@@ -47,9 +58,11 @@ export default class Items extends Component {
 						);
 					}}
 				</Query>
+				<Pagination page={this.props.page} />
 			</Center>
 		);
 	}
 }
 
+// Export the ALL_ITEMS_QUERY because we are going to use it in our DeleteItem component
 export { ALL_ITEMS_QUERY };

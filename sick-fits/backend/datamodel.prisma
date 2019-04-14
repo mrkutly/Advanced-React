@@ -9,10 +9,23 @@
 
 # """  Then write your Mutations and Queries for the model in Mutation.js and 'Query.js """
 
+enum Permission {
+	ADMIN
+	USER
+	ITEMCREATE
+	ITEMUPDATE
+	ITEMDELETE
+	PERMISSIONUPDATE
+}
+
 type User {
 	id: ID! @unique
 	name: String!
-	email: String!
+	email: String! @unique
+	password: String!
+	resetToken: String
+	resetTokenExpiry: Float
+	permissions: [Permission]
 }
 
 type Item {
