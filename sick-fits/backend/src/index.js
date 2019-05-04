@@ -9,7 +9,7 @@ const server = createServer();
 // Use express middleware to handle cookies (JWT)
 server.express.use(cookieParser());
 
-// TODO: Use express middleware to populate current User
+// Use express middleware to populate current User
 // decode the JWT so we can get the UserID on each request
 server.express.use((req, res, next) => {
 	// grab token from request
