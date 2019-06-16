@@ -2,14 +2,30 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { randomBytes } = require("crypto");
 const { promisify } = require("util");
-const { transport, makeEmail } = require('../mail')
+const { transport, makeEmail } = require("../mail");
 
 const Mutations = {
 	async createItem(parent, args, ctx, info) {
 		// create the item
 		// args are the properties of the object we are creating, so we can just spread them
 		// info contains the actual query that got passed in, so we know what to return after the item is created
-		const item = await ctx.db.mutation.createItem({ data: { ...args } }, info);
+
+		if (!ctx.request.userId) {
+			throw new Error("You must be logged in to do that!");
+		}
+
+		const item = await ctx.db.mutation.createItem(
+			{
+				data: {
+					// this is how you create a relationship between the item and the user
+					user: {
+						connect: { id: ctx.request.userId },
+					},
+					...args,
+				},
+			},
+			info
+		);
 		return item;
 	},
 
@@ -113,7 +129,7 @@ const Mutations = {
 
 		// email them the reset token
 		const mailResponse = await transport.sendMail({
-			from: 'mark.sauer.utley@gmail.com', 
+			from: "mark.sauer.utley@gmail.com",
 			to: user.email,
 			subject: "Your password reset",
 			html: makeEmail(`
@@ -122,8 +138,8 @@ const Mutations = {
 				<a href="${process.env.FRONTEND_URL}/reset?resetToken=${resetToken}">
 					Click here to reset your password
 				</a>
-			`)
-		})
+			`),
+		});
 		// return the message
 		return { message: "You will be sent an email shortly" };
 	},
