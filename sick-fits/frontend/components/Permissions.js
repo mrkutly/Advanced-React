@@ -31,14 +31,14 @@ export default props => {
 										<th>Name</th>
 										<th>Email</th>
 										{permissionTypes.map(perm => (
-											<th>{perm}</th>
+											<th key={perm}>{perm}</th>
 										))}
 										<th>&#x2193;</th>
 									</tr>
 								</thead>
 								<tbody>
 									{data.users.map(user => (
-										<User user={user} />
+										<User key={user.email} user={user} />
 									))}
 								</tbody>
 							</Table>
@@ -51,17 +51,45 @@ export default props => {
 };
 
 class User extends React.Component {
+	state = {
+		permissions: {
+			ADMIN: this.props.user.permissions.includes("ADMIN"),
+			USER: this.props.user.permissions.includes("USER"),
+			ITEMCREATE: this.props.user.permissions.includes("ITEMCREATE"),
+			ITEMUPDATE: this.props.user.permissions.includes("ITEMUPDATE"),
+			ITEMDELETE: this.props.user.permissions.includes("ITEMDELETE"),
+			PERMISSIONUPDATE: this.props.user.permissions.includes(
+				"PERMISSIONUPDATE"
+			),
+		},
+	};
+
+	updatePermissions = ({ target, checked }) => {
+		this.setState(prevState => ({
+			permissions: {
+				...prevState.permissions,
+				[target.name]: target.checked,
+			},
+		}));
+	};
+
 	render() {
 		const { user } = this.props;
+		console.log(this.state);
 
 		return (
 			<tr>
 				<td>{user.name}</td>
 				<td>{user.email}</td>
 				{permissionTypes.map(perm => (
-					<td>
+					<td key={perm}>
 						<label htmlFor={`${user.id}-permission-${perm}`}>
-							<input type="checkbox" />
+							<input
+								type="checkbox"
+								checked={this.state.permissions[perm]}
+								name={perm}
+								onChange={this.updatePermissions}
+							/>
 						</label>
 					</td>
 				))}
