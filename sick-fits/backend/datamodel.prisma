@@ -28,6 +28,7 @@ type User {
 	permissions: [Permission] @scalarList(strategy: RELATION)
 	updatedAt: DateTime! @updatedAt
 	createdAt: DateTime! @createdAt
+	cart: [CartItem!]!
 }
 
 type Item {
@@ -39,5 +40,12 @@ type Item {
 	price: Int!
 	updatedAt: DateTime! @updatedAt
 	createdAt: DateTime! @createdAt
+	user: User!
+}
+
+type CartItem {
+	id: ID! @id
+	quantity: Int! @default(value: 1)
+	item: Item! # joins a user with an item
 	user: User!
 }

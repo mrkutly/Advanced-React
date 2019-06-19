@@ -227,6 +227,47 @@ const Mutations = {
 			info
 		);
 	},
+
+	async addToCart(parent, args, ctx, info) {
+		// check the they are signed in
+		const { userId } = ctx.request;
+
+		if (!userId) throw new Error("You must be signed in");
+
+		// query the user's current cart
+		// ? see the generated graphql file to see the cartItems query
+		// cartItems returns an array, but since there will only
+		// ever be one cart item with this user and this item, we can destructure it
+		const [existingCartItem] = await ctx.db.query.cartItems({
+			where: {
+				user: { id: userId },
+				item: { id: args.id },
+			},
+		});
+
+		// check if that item is already in that cart
+		if (existingCartItem) {
+			console.log("this item already in the cart");
+			// if it is, increment it by one
+			return ctx.db.mutation.updateCartItem(
+				{
+					where: { id: existingCartItem.id },
+					data: { quantity: ++existingCartItem.quantity },
+				},
+				info
+			);
+		}
+		// if not, create a fresh cart item for the user
+		return ctx.db.mutation.createCartItem(
+			{
+				data: {
+					user: { connect: { id: userId } },
+					item: { connect: { id: args.id } },
+				},
+			},
+			info
+		);
+	},
 };
 
 module.exports = Mutations;
