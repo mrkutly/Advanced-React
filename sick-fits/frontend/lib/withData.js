@@ -43,7 +43,7 @@ function createClient({ headers }) {
 			},
 			// this is your initial state
 			defaults: {
-				cartOpen: true,
+				cartOpen: false,
 			},
 		},
 	});

@@ -25,7 +25,7 @@ class Item extends Component {
 					<Link href={{ pathname: "/update", query: { id: item.id } }}>
 						<a>Edit ✏️</a>
 					</Link>
-					<AddToCart id={item.id} />
+					<AddToCart item={item} />
 					<DeleteItem id={item.id}>Delete This Item</DeleteItem>
 				</div>
 			</ItemStyles>

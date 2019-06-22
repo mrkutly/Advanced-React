@@ -4,6 +4,7 @@ import NavStyles from "./styles/NavStyles";
 import User from "./User";
 import SignOut from "./SignOut";
 import { TOGGLE_CART_MUTATION } from "./Cart";
+import CartCount from "./CartCount";
 
 const Nav = () => {
 	return (
@@ -27,7 +28,17 @@ const Nav = () => {
 							</Link>
 							<SignOut />
 							<Mutation mutation={TOGGLE_CART_MUTATION}>
-								{toggleCart => <button onClick={toggleCart}>My Cart </button>}
+								{toggleCart => (
+									<button onClick={toggleCart}>
+										My Cart{" "}
+										<CartCount
+											count={me.cart.reduce(
+												(count, item) => count + item.quantity,
+												0
+											)}
+										/>
+									</button>
+								)}
 							</Mutation>
 						</>
 					)}

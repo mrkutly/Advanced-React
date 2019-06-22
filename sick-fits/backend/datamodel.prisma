@@ -46,6 +46,6 @@ type Item {
 type CartItem {
 	id: ID! @id
 	quantity: Int! @default(value: 1)
-	item: Item! # joins a user with an item
+	item: Item # joins a user with an item
 	user: User!
 }
