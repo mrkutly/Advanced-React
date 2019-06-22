@@ -31,33 +31,31 @@ const UPDATE_PERMISSIONS_MUTATION = gql`
 export default props => {
 	return (
 		<Query query={ALL_USERS_QUERY}>
-			{({ data, loading, error }) =>
-				console.log(data) || (
+			{({ data, loading, error }) => (
+				<div>
+					<Error error={error} />
 					<div>
-						<Error error={error} />
-						<div>
-							<h2>Manage permissions</h2>
-							<Table>
-								<thead>
-									<tr>
-										<th>Name</th>
-										<th>Email</th>
-										{permissionTypes.map(perm => (
-											<th key={perm}>{perm}</th>
-										))}
-										<th>&#x2193;</th>
-									</tr>
-								</thead>
-								<tbody>
-									{data.users.map(user => (
-										<UserPermissions key={user.email} user={user} />
+						<h2>Manage permissions</h2>
+						<Table>
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Email</th>
+									{permissionTypes.map(perm => (
+										<th key={perm}>{perm}</th>
 									))}
-								</tbody>
-							</Table>
-						</div>
+									<th>&#x2193;</th>
+								</tr>
+							</thead>
+							<tbody>
+								{data.users.map(user => (
+									<UserPermissions key={user.email} user={user} />
+								))}
+							</tbody>
+						</Table>
 					</div>
-				)
-			}
+				</div>
+			)}
 		</Query>
 	);
 };

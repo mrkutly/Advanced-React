@@ -83,7 +83,6 @@ class CreateItem extends Component {
 							// create the item
 							const res = await createItem();
 							// send them to single item page
-							console.log(res);
 							Router.push({
 								pathname: "/item",
 								query: { id: res.data.createItem.id },

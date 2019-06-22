@@ -28,7 +28,6 @@ const Cart = props => {
 		<User>
 			{({ data: { me } }) => {
 				if (!me) return null;
-				console.log(me);
 
 				return (
 					<Mutation mutation={TOGGLE_CART_MUTATION}>
