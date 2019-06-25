@@ -5,6 +5,7 @@ const { promisify } = require("util");
 const { transport, makeEmail } = require("../mail");
 const { hasPermission } = require("../utils");
 const { ADMIN, ITEMDELETE, PERMISSIONUPDATE } = require("../permissionTypes");
+const stripe = require("../stripe");
 
 const Mutations = {
 	async createItem(parent, args, ctx, info) {
@@ -285,6 +286,78 @@ const Mutations = {
 		}
 		// delete the cartItem
 		return ctx.db.mutation.deleteCartItem({ where: { id: args.id } }, info);
+	},
+	async createOrder(parent, args, ctx, info) {
+		// 1. Query the current user and make sure they are signed in
+		const { userId } = ctx.request;
+		if (!userId) throw new Error("You must sign in to complete this order.");
+
+		const user = await ctx.db.query.user(
+			{ where: { id: userId } },
+			`{
+				id 
+				name 
+				email 
+				cart { 
+					id 
+					quantity 
+					item { 
+						title 
+						price 
+						id 
+						description 
+						image 
+						largeImage
+					}
+				}
+			}`
+		);
+		// 2. Recalculate total price (don't trust the client side!)
+		const amount = user.cart.reduce(
+			(acc, { quantity, item: { price } }) => acc + quantity * price,
+			0
+		);
+
+		// 3. Create the stripe charge (turn token into money)
+		const charge = await stripe.charges.create({
+			amount,
+			currency: "USD",
+			source: args.token,
+		});
+
+		// 4. convert the cartItems to orderItems
+		const orderItems = user.cart.map(({ quantity, item }) => {
+			const orderItem = {
+				quantity,
+				user: { connect: { id: userId } },
+				...item,
+			};
+			delete orderItem.id;
+			return orderItem;
+		});
+
+		// 5. create the order in our db
+		const order = await ctx.db.mutation.createOrder(
+			{
+				data: {
+					total: charge.amount,
+					charge: charge.id,
+					items: { create: orderItems },
+					user: { connect: { id: userId } },
+				},
+			},
+			info
+		);
+
+		// 6. clear user's cart and delete cartItems from db
+		const cartItemIds = user.cart.map(ci => ci.id);
+		await ctx.db.mutation.deleteManyCartItems({
+			where: { id_in: cartItemIds },
+		});
+
+		// 7. return order to the client
+		console.log(order);
+		return order;
 	},
 };
 
