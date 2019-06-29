@@ -28,14 +28,22 @@ function totalItem(cart) {
 }
 
 export default class TakeMyMoney extends React.Component {
-	onToken = (res, createOrder) => {
-		console.log(res);
+	onToken = async (res, createOrder) => {
+		// start the progress bar
+		NProgress.start();
 		// manually call the mutation once we have the strip token
-		createOrder({
+		const order = await createOrder({
 			variables: {
 				token: res.id,
 			},
 		}).catch(e => alert(e.message));
+		console.log(order);
+
+		// reroute to the order's show page
+		Router.push({
+			pathname: "/order",
+			query: { id: order.data.createOrder.id },
+		});
 	};
 	render() {
 		return (
