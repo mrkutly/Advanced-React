@@ -38,6 +38,7 @@ const DisplayError = ({ error }) => {
 	// Else just return the singular styled component
 	return (
 		<ErrorStyles>
+			{/* data-test makes it super easy to find these components in your tests */}
 			<p data-test="graphql-error">
 				<strong>Shoot!</strong>
 				{error.message.replace("GraphQL error: ", "")}

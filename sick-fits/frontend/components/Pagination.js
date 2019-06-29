@@ -6,7 +6,7 @@ import gql from "graphql-tag";
 import PaginationStyles from "./styles/PaginationStyles";
 import { perPage } from "../config";
 
-const PAGINATION_QUERY = gql`
+export const PAGINATION_QUERY = gql`
 	query PAGINATION_QUERY {
 		itemsConnection {
 			aggregate {
@@ -26,7 +26,7 @@ const Pagination = props => {
 				const pages = Math.ceil(count / perPage);
 				const { page } = props;
 				return (
-					<PaginationStyles>
+					<PaginationStyles data-test="pagination">
 						<Head>
 							<title>
 								Sick Fits! - Page {page} of {pages}
@@ -41,7 +41,7 @@ const Pagination = props => {
 							</a>
 						</Link>
 						<p>
-							Page {page} of {pages}
+							Page {page} of <span className="total-pages">{pages}</span>
 						</p>
 						<p>{count} Items Total</p>
 						<Link
