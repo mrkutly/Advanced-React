@@ -4,7 +4,7 @@ import gql from "graphql-tag";
 import Form from "./styles/Form";
 import Error from "./ErrorMessage";
 
-const REQUEST_RESET_MUTATION = gql`
+export const REQUEST_RESET_MUTATION = gql`
 	mutation REQUEST_RESET_MUTATION($email: String!) {
 		requestReset(email: $email) {
 			message
@@ -12,7 +12,7 @@ const REQUEST_RESET_MUTATION = gql`
 	}
 `;
 
-class SignIn extends Component {
+class RequestReset extends Component {
 	state = {
 		email: "",
 	};
@@ -21,7 +21,11 @@ class SignIn extends Component {
 
 	render() {
 		return (
-			<Mutation mutation={REQUEST_RESET_MUTATION} variables={this.state}>
+			<Mutation
+				mutation={REQUEST_RESET_MUTATION}
+				variables={this.state}
+				onError={() => {}}
+			>
 				{(reset, { error, loading, called }) => {
 					return (
 						// set method to post. If your JS breaks, it would default to a get, and send the user's password
@@ -33,6 +37,7 @@ class SignIn extends Component {
 								await reset();
 								this.setState({ email: "" });
 							}}
+							data-test="form"
 						>
 							<fieldset disabled={loading} aria-busy={loading}>
 								<h2>Request Password Reset</h2>
@@ -62,4 +67,4 @@ class SignIn extends Component {
 	}
 }
 
-export default SignIn;
+export default RequestReset;
