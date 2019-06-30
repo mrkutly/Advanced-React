@@ -5,7 +5,7 @@ import Form from "./styles/Form";
 import Error from "./ErrorMessage";
 import { CURRENT_USER_QUERY } from "./User";
 
-const SIGNUP_MUTATION = gql`
+export const SIGNUP_MUTATION = gql`
 	mutation SIGNUP_MUTATION(
 		$email: String!
 		$name: String!
@@ -40,6 +40,7 @@ class Signup extends Component {
 						// set method to post. If your JS breaks, it would default to a get, and send the user's password
 						// as a GET request. This could end up in server logs or in the user's history and is insecure
 						<Form
+							data-test="form"
 							method="post"
 							onSubmit={async e => {
 								e.preventDefault();
